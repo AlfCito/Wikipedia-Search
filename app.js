@@ -1,7 +1,6 @@
 $(document).ready(function($){
 
 	var results = [];
-	//resetObject();
 	var counter = 0;
 	
 	$( "#searchClick" ).on( "click", function(e){
@@ -11,21 +10,7 @@ $(document).ready(function($){
 		$("#results").empty();
 		searchWiki($('#searchField').val());
 	});
-/*
-	function resetObject(){
-		for(var i =0; i<10; i++){
-			results.push({
-				'id': i,
-				'pageid': '',
-				'title': '',
-				'snippet': '',
-				'pageURL':'',
-				'imageName':'',
-				'imageURL':'',
-				'imageThumb':''
-			})
-		}
-	}*/
+
 
 	function searchWiki(searchFor){	
 
@@ -72,7 +57,7 @@ $(document).ready(function($){
 		$.ajax({
 
   			type: "GET",
-	        url: "http://en.wikipedia.org/w/api.php?action=query&format=json&prop=images&titles="+results[index].title+"&format=json&callback=?",
+	        url: "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=images&titles="+results[index].title+"&format=json&callback=?",
 	        contentType: "application/json; charset=utf-8",
 	        async: false,
 	        dataType: "json",
@@ -89,7 +74,7 @@ $(document).ready(function($){
 		$.ajax({
 
   			type: "GET",
-	        url: "http://en.wikipedia.org/w/api.php?action=query&format=json&titles=Image:"+results[index].imageName+"&prop=imageinfo&iiprop=url&callback=?",
+	        url: "https://en.wikipedia.org/w/api.php?action=query&format=json&titles=Image:"+results[index].imageName+"&prop=imageinfo&iiprop=url&callback=?",
 	        contentType: "application/json; charset=utf-8",
 	        async: false,
 	        dataType: "json",
@@ -106,7 +91,7 @@ $(document).ready(function($){
 		$.ajax({
 
   			type: "GET",
-	        url: "http://en.wikipedia.org/w/api.php?action=query&titles="+results[index].title+"&prop=pageimages&format=json&pithumbsize=200&callback=?",
+	        url: "https://en.wikipedia.org/w/api.php?action=query&titles="+results[index].title+"&prop=pageimages&format=json&pithumbsize=200&callback=?",
 	        contentType: "application/json; charset=utf-8",
 	        async: false,
 	        dataType: "json",
