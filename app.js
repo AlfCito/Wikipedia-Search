@@ -4,19 +4,44 @@ $(document).ready(function($){
 	var counter = 0;
 	
 	$( "#searchClick" ).on( "click", function(e){
+
 		e.preventDefault();
 		results = [];
 		counter = 0;
 		$("#results").empty();
-		searchWiki($('#searchField').val());
+
+		var promised = searchWiki($('#searchField').val());
+
+		promised.done(function(data){
+
+			//console.log('primera data');
+			//console.log(data);
+
+			$.each(data.query.search, function(key, value){
+
+	  			results.push({
+	  				'id': key,
+	  				'pageid' : value.pageid,
+	  				'title' : value.title,
+	  				'snippet' : value.snippet,
+	  				'pageURL' : 'https://en.wikipedia.org/?curid='+ value.pageid
+	  			});
+
+	  		});
+
+			return getImages(data);
+	  		
+
+		}).done(function(y){
+			return populate();
+		})
+
 	});
 
 
 	function searchWiki(searchFor){	
 
-		//console.log(results);
-
-		$.ajax({
+		return $.ajax({
 			url: '//en.wikipedia.org/w/api.php',
 		  	data: {
 			    action: 'query',
@@ -27,94 +52,104 @@ $(document).ready(function($){
 		  	},
 		  	dataType: 'jsonp',
 		  	type: 'POST',
-		    headers: { 'Api-User-Agent': 'eyMedia/1.0' },
-		  	success: function (x) {  		
-
-		  		for(var i =0; i<x.query.search.length; i++){
-
-		  			results.push({
-		  				'id': i,
-		  				'pageid' : x.query.search[i].pageid,
-		  				'title' : x.query.search[i].title,
-		  				'snippet' : x.query.search[i].snippet,
-		  				'pageURL' : 'https://en.wikipedia.org/?curid='+ x.query.search[i].pageid
-		  			});
-
-		  			getImages(i);
-		  			//getThumb(i);
-		  		}
-
-		  		console.log(results);
-		  		//populate();
-		  	}
-
+		    headers: { 'Api-User-Agent': 'eyMedia/1.0' }		
 		});		
 
 	}
 
-	function getImages(index){		
+	function getImages(queryResult){	
 
-		$.ajax({
+		$.each(queryResult.query.search, function(key, value){
 
-  			type: "GET",
-	        url: "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=images&titles="+results[index].title+"&format=json&callback=?",
-	        contentType: "application/json; charset=utf-8",
-	        async: false,
-	        dataType: "json",
-	        success: function (data, textStatus, jqXHR) {
-	        	results[index].imageName = data.query.pages[results[index].pageid].images[0].title.substring(5);
-	        	getImageURL(index)
-	        },
+			var getAllImages = allImages(key);
 
-  		});
+			getAllImages.done(function(imagesData){
+
+				var selectedImage = '';
+
+				if(imagesData.query.pages[Object.keys(imagesData.query.pages)[0]].images){
+					selectedImage = imagesData.query.pages[Object.keys(imagesData.query.pages)[0]].images[0].title.substring(5);
+				}
+
+				return getImageURL(selectedImage, key);
+
+			}).done(function(imageUrlData){
+
+				return getThumb(key);
+
+				//console.log(imageUrlData);
+
+				/*
+				var selectedImageUrl = '';
+
+				if(imageUrlData.query.pages[Object.keys(imageUrlData.query.pages)[0]].imageinfo){
+					selectedImageUrl = imageUrlData.query.pages[Object.keys(imageUrlData.query.pages)[0]].imageinfo[0].url;
+				}
+
+	        	results[key].imageURL = selectedImageUrl;   
+	        	*/
+
+			}).done(function(thumbData){
+
+			});
+
+
+			function allImages(key){
+				return $.ajax({
+		  			type: "GET",
+			        url: "http://en.wikipedia.org/w/api.php?action=query&format=json&prop=images&titles="+queryResult.query.search[key].title+"&format=json&callback=?",
+			        contentType: "application/json; charset=utf-8",
+			        async: false,
+			        dataType: "json"
+				});
+	  		};
+
+	  		function getImageURL(selectedImage, key){	
+				return $.ajax({
+		  			type: "GET",
+			        url: "https://en.wikipedia.org/w/api.php?action=query&format=json&titles=Image:"+selectedImage+"&prop=imageinfo&iiprop=url&callback=?",
+			        contentType: "application/json; charset=utf-8",
+			        async: false,
+			        dataType: "json",
+			        success: function (data, textStatus, jqXHR) {
+			        	results[key].imageURL = data.query.pages[Object.keys(data.query.pages)[0]].imageinfo[0].url;
+			        }
+		  		});
+			}
+
+			function getThumb(key){		
+
+				return $.ajax({
+		  			type: "GET",
+			        url: "https://en.wikipedia.org/w/api.php?action=query&titles="+results[key].title+"&prop=pageimages&format=json&pithumbsize=200&callback=?",
+			        contentType: "application/json; charset=utf-8",
+			        async: false,
+			        dataType: "json",
+			        success: function (data, textStatus, jqXHR) {
+			        	if(data.query.pages[results[key].pageid].thumbnail){
+			        		results[key].imageThumb = data.query.pages[results[key].pageid].thumbnail.source;
+			        	}else{
+			        		results[key].imageThumb = '';
+			        	}
+			        	//counter++;
+			        }
+		  		});
+			}
+
+
+		});
 	}
 
-	function getImageURL(index){		
+	
 
-		$.ajax({
-
-  			type: "GET",
-	        url: "https://en.wikipedia.org/w/api.php?action=query&format=json&titles=Image:"+results[index].imageName+"&prop=imageinfo&iiprop=url&callback=?",
-	        contentType: "application/json; charset=utf-8",
-	        async: false,
-	        dataType: "json",
-	        success: function (data, textStatus, jqXHR) {
-	        	results[index].imageURL = data.query.pages[Object.keys(data.query.pages)[0]].imageinfo[0].url;
-	        	getThumb(index);
-	        },
-
-  		});
-	}
-
-	function getThumb(index){		
-
-		$.ajax({
-
-  			type: "GET",
-	        url: "https://en.wikipedia.org/w/api.php?action=query&titles="+results[index].title+"&prop=pageimages&format=json&pithumbsize=200&callback=?",
-	        contentType: "application/json; charset=utf-8",
-	        async: false,
-	        dataType: "json",
-	        success: function (data, textStatus, jqXHR) {
-	        	if(data.query.pages[results[index].pageid].thumbnail){
-	        		results[index].imageThumb = data.query.pages[results[index].pageid].thumbnail.source;
-	        	}else{
-	        		results[index].imageThumb = '';
-	        	}
-	        	counter++;
-
-	        },
-
-  		});
-
-	}
+	/*
 
 	$( document ).ajaxComplete(function() {
 		if(counter === 10 ){
 			populate();
 		}
 		
-	});
+	});*/
 
 	function populate(){
 
