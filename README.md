@@ -7,7 +7,7 @@ Part of the Intermediate Front End Development Projects from FreeCodeCamp.org
 
 
 
-User Stories:
+### User Stories:
 
 1. User search Wikipedia entries in a search box and see the resulting Wikipedia entries.
 2. User can click a button to see a random Wikipedia entry.
