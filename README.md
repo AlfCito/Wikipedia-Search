@@ -1,5 +1,4 @@
 # Wikipedia-Search
-FreeCodeCamp Wikipedia Search project
 Part of the Intermediate Front End Development Projects from FreeCodeCamp.org
 
 <img src="images/searchWiki.jpg" >
