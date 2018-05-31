@@ -201,13 +201,15 @@ let populate = () => {
 		}
 
 		document.getElementById("results").innerHTML += ""+
-			"<div class='mx-2 my-2'>"+
-			"<div class='card align-self-stretch'>"+imageData+
-			"<div class='card-body'>"+
-			"<h5 class='card-title'>"+results[i].title+"</h5>"+
-			"<p class='card-text'>"+results[i].snippet+"</p>"+
-			"<a href='"+results[i].pageURL+"' target='_blank' class='btn btn-primary'>Read More</a>"+
-			"</div></div></div>";
+			"<div class='col-12 col-md-6 col-lg-4 col-xl-3 my-2'>"+
+				"<div class='card align-self-stretch'>"+imageData+
+					"<div class='card-body'>"+
+						"<h5 class='card-title'>"+results[i].title+"</h5>"+
+						"<p class='card-text'>"+results[i].snippet+"</p>"+
+						"<a href='"+results[i].pageURL+"' target='_blank' class='btn btn-primary'>Read More</a>"+
+					"</div>"+
+				"</div>"+
+			"</div>";
 
 	}
 

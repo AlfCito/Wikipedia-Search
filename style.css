@@ -6,52 +6,15 @@ header{
 	background-color: #ccdbec;
 }
 
-.form-group{
-	width: 100%;
-}
 
-.results{
-	margin: 0 auto;
-}
-
-.card{
-	width: 100vw;
+.card-img-top{
+	padding: 10px;
 }
 
 #searchTerm{
 	display: flex;
 	justify-content: center;
+	text-align: center;
 }
 
 
-@media (min-width: 576px) { 
-	.card{
-	 width: 80vw;
-	}
-
-}
-
-@media (min-width: 768px) { 
-
-	.card{
-	 width: 40vw;
-	}
-
-}
-
-@media (min-width: 992px) { 
-
-	.card{
-	 width: 25vw;
-	}
-
-}
-
-@media (min-width: 1200px) { 
-	
-	.card{
-		 width: 20vw;
-		}
-	}
-
-}
