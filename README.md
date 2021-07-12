@@ -2,7 +2,7 @@
 Part of the Intermediate Front End Development Projects from FreeCodeCamp.org
 
 <img src="images/searchWiki.jpg" >
-Link: https://alfcito.github.io/Wikipedia-Search/
+Link: https://eddieyepez.github.io/Wikipedia-Search/
 
 ### User Stories:
 
